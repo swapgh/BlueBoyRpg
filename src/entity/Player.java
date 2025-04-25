@@ -41,35 +41,82 @@ public class Player extends Entity{
 			e.getStackTrace();
 		}
 	}
+	
 	public void update() {
-		if (km.up==true) {
-			direction="up";
-			y-=speed;
+		if(km.up==true||km.down==true||
+				km.left==true||km.right==true) {
+			
+			
+			if (km.up==true) {
+				direction="up";
+				y-=speed;
+			}
+			else if (km.down == true) {
+				direction="down";
+				y+=speed;
+			}
+			else if (km.left==true) {
+				direction="left";
+				x-=speed;
+			}
+			else if (km.right==true) {
+				direction="right";
+				x+=speed;
+			}
+			spriteCounter++;
+			if (spriteCounter>10) {
+				if (spriteNum==1) {
+					spriteNum=2;
+				}else if (spriteNum==2) {
+					spriteNum=1;
+				}
+				spriteCounter=0;
+			}
 		}
-		else if (km.down == true) {
-			direction="down";
-			y+=speed;
-		}
-		else if (km.left==true) {
-			direction="left";
-			x-=speed;
-		}
-		else if (km.right==true) {
-			direction="right";
-			x+=speed;
-		}
+
 	}
 	public void draw(Graphics2D g2) {
 		
 		g2.setColor(Color.PINK);
 		g2.fillRect(x, y, gp.tileSize, gp.tileSize);
-		BufferedImage img = null;
-		switch(direction) {
-		case"up"->img=up1;
-		case"down"->img=down1;
-		case"left"->img=left1;
-		case"right"->img=right1;
+		
+		BufferedImage image = null;
+
+		switch (direction) {
+		    case "up":
+		        if (spriteNum == 1) {
+		            image = up1;
+		        } else if (spriteNum == 2) {
+		            image = up2;
+		        }
+		        break;
+
+		    case "down":
+		        if (spriteNum == 1) {
+		            image = down1;
+		        } else if (spriteNum == 2) {
+		            image = down2;
+		        }
+		        break;
+
+		    case "left":
+		        if (spriteNum == 1) {
+		            image = left1;
+		        } else if (spriteNum == 2) {
+		            image = left2;
+		        }
+		        break;
+
+		    case "right":
+		        if (spriteNum == 1) {
+		            image = right1;
+		        } else if (spriteNum == 2) {
+		            image = right2;
+		        }
+		        break;
 		}
-		g2.drawImage(img, x, y, gp.tileSize, gp.tileSize, null);
+
+		g2.drawImage(image, x, y, gp.tileSize, gp.tileSize, null);
+
 	}
 }
