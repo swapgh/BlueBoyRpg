@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 
 import entity.Player;
 import manager.KeyManager;
+import tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable{
 	
@@ -24,14 +25,13 @@ public class GamePanel extends JPanel implements Runnable{
 	//SYSTEM
 	Thread gameLoop;
 	KeyManager km=new KeyManager();
+	TileManager tileM=new TileManager(this);
 	int FPS=60;
 	//SETTINGS
 	//ENTITY AND OBJECT
 	Player player = new Player(this, km);
 	//GAME STATE
-	int x= 10;
-	int y =10;
-	int speed=4;
+
 	public GamePanel() {
 		this.setPreferredSize(new Dimension(screenWidth,screenHeight));
 		this.setBackground(Color.BLACK);
@@ -51,7 +51,7 @@ public class GamePanel extends JPanel implements Runnable{
 		super.paintComponent(g);
 		
 		Graphics2D g2= (Graphics2D)g;
-		
+		tileM.draw(g2);
 		player.draw(g2);
 		g2.dispose();
 	}
