@@ -10,8 +10,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
+import entity.Entity;
 import objects.Obj_Heart;
-import objects.SuperObject;
 
 
 public class UI {
@@ -45,7 +45,7 @@ public class UI {
 		roboto = new Font("Roboto", Font.PLAIN, 40);
 		robotoB = new Font("Roboto", Font.BOLD, 40);
 		//UI HUD OBJECTS
-		SuperObject heart= new Obj_Heart(gp);
+		Entity heart= new Obj_Heart(gp);
 		heart_full=heart.image;
 		heart_half=heart.image2;
 		heart_blank=heart.image3;

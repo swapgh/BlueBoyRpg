@@ -4,6 +4,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
 import javax.swing.JPanel;
 import entity.Entity;
 import entity.Player;
@@ -12,7 +16,6 @@ import manager.CollisionManager;
 import manager.EventManager;
 import manager.KeyManager;
 import manager.SoundManager;
-import objects.SuperObject;
 import tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable{
@@ -38,6 +41,7 @@ public class GamePanel extends JPanel implements Runnable{
 	SoundManager music= new SoundManager();
 	SoundManager sE = new SoundManager();
 	public EventManager eMan = new EventManager(this);
+//	public CollisionChecker cCheck = new CollisionChecker(this);
 	public CollisionManager cManager= new CollisionManager(this);
 	public UI ui= new UI(this);
 	int FPS=60;
@@ -50,8 +54,11 @@ public class GamePanel extends JPanel implements Runnable{
 	
 	//ENTITY AND OBJECT
 	public Player player = new Player(this, km);
-	public SuperObject obj[]=new SuperObject[10];
+	public Entity obj[]=new Entity[10];
 	public Entity npc[] = new Entity[10];
+	public Entity enemy[] = new Entity[20];
+	//PLAYER-NPC-OBJECT ARRAY TO RENDER FIRST
+	ArrayList<Entity> entityList= new ArrayList<>();
 	public AssetManager aSetter = new AssetManager(this);
 	//GAME STATE
 
@@ -65,6 +72,7 @@ public class GamePanel extends JPanel implements Runnable{
 	public void setupGame() {
 		aSetter.setObject();
 		aSetter.setNpc();
+		aSetter.setEnemy();
 //		playMusic(0);
 //		stopMusic();
 		gameState=playState;
@@ -83,6 +91,11 @@ public class GamePanel extends JPanel implements Runnable{
 			for(int i = 0 ; i < npc.length;i++) {
 				if (npc[i]!=null) {
 					npc[i].update();
+				}
+			}
+			for(int i = 0 ; i < enemy.length;i++) {
+				if (enemy[i] !=null) {
+					enemy[i].update();
 				}
 			}
 		}
@@ -106,20 +119,42 @@ public class GamePanel extends JPanel implements Runnable{
 			//*****************
 			//DRAW FIRST THE TILE
 			tileM.draw(g2);
-			//THEN OBJECTS
-			for(int i = 0 ; i < obj.length;i++) {
-				if (obj[i]!=null) {
-					obj[i].draw(g2, this);
+			entityList.add(player);
+			for(int i = 0; i < npc.length;i++) {
+				if (npc[i] != null) {
+					entityList.add(npc[i]);
 				}
 			}
-			//THEN THE NPC
-			for(int i = 0 ; i < npc.length;i++) {
-				if (npc[i]!=null) {
-					npc[i].draw(g2);
+			for(int i = 0; i < obj.length;i++) {
+				if (obj[i] != null) {
+					entityList.add(obj[i]);
 				}
 			}
-			//THEN THE PLAYER
-			player.draw(g2);
+			for(int i = 0; i < enemy.length;i++) {
+				if (enemy[i] != null) {
+					entityList.add(enemy[i]);
+				}
+			}
+			//SORT THE DRAW ORDER
+			Collections.sort(entityList,new Comparator<Entity>() {
+
+				@Override
+				public int compare(Entity e1, Entity e2) {
+					int result = Integer.compare(e1.worldY, e2.worldY);
+					return result;
+				}
+				
+			});
+			//DRAW ENTITY COLLECTION LIST
+			for(int i = 0 ; i< entityList.size();i++) {
+				entityList.get(i).draw(g2);
+			}
+			//EMPTY ENTITY COLLECTION LIST
+			for(int i = 0 ; i< entityList.size();i++) {
+				entityList.remove(i).draw(g2);
+			}
+//			//THEN THE PLAYER
+//			player.draw(g2);
 			//THEN THE UI
 			ui.draw(g2);
 		}

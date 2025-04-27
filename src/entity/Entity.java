@@ -14,13 +14,16 @@ public class Entity {
 	GamePanel gp;
 	public int worldX, worldY;
 	public int speed;
+	//OBJECT IMAGES
+	public BufferedImage image,image2,image3;
+	public String name;
+	public boolean collision = false;
+	public String direction="down";
 	// KEYS
 	public BufferedImage up1, up2, down1, down2, left1, left2, right1, right2;
-	public String direction;
 	// IMAGES
 	public int spriteCounter = 0;
 	public int spriteNum = 1;
-
 	// COLLISION
 	public Rectangle solidArea = new Rectangle(0, 0, 48, 48);
 	public boolean collisionOn = false;
@@ -30,10 +33,14 @@ public class Entity {
 	// PARA INTERACCION NPC
 	String dialogue[]= new String [20];
 	int dialogueIndex=0;
+	// INTERACCION ENEMY
+	public boolean invincible=false;
+	public int invincibleCounter=0;
+	public int type; //0=player,1=npc,2=enemy
 	//UI CHAR STATUS
 	public int maxLife;
 	public int life;
-
+	
 	public Entity(GamePanel gp) {
 		this.gp = gp;
 	}
@@ -59,7 +66,17 @@ public class Entity {
 		collisionOn=false;
 		gp.cManager.checkTile(this);
 		gp.cManager.checkObject(this,false);
-		gp.cManager.checkPlayer(this);
+		//SE CAMBIA CHECKPLAYER PARA QUE DETECTE SI ENEMY LO TOCO Y NO SOLO CUANDOP PLAYER LO TOCA (BOOLEAN)
+		boolean contactPlayer=gp.cManager.checkPlayer(this);
+		gp.cManager.checkEntity(this, gp.npc);
+		gp.cManager.checkEntity(this, gp.enemy);
+		if (this.type == 2 && contactPlayer ==true) {
+			if (gp.player.invincible == false) {
+				gp.player.life -=1;
+				gp.player.invincible = true;
+			}
+		}
+		
 		if (!collisionOn) { //***************************************************CAMBIO************************************
 			switch(direction) {
 			case "up":	worldY-=speed;break;
