@@ -107,6 +107,9 @@ public KeyManager(GamePanel gp) {
 			if (code == KeyEvent.VK_E) {
 				ePressed=true;
 			}
+			if (code == KeyEvent.VK_ENTER) {
+				enterPress=true;
+			}
 			if (code == KeyEvent.VK_P) {
 				gp.gameState = gp.pauseState;
 			}
@@ -153,6 +156,15 @@ public KeyManager(GamePanel gp) {
 		}
 		if (code == KeyEvent.VK_D) {
 			rightPressed=false;
+		}
+		if (code == KeyEvent.VK_E) {
+			ePressed=false;
+		}
+		if (code == KeyEvent.VK_T) {
+			ePressed=false;
+		}
+		if (code == KeyEvent.VK_ENTER) {
+			enterPress=false;
 		}
 	}
 	@Override
