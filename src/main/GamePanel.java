@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
+import entity.Entity;
 import entity.Player;
 import manager.AssetManager;
 import manager.CollisionManager;
@@ -32,17 +33,22 @@ public class GamePanel extends JPanel implements Runnable{
 //	public final int worldHeight=tileSize*maxWorldRow;
 	//SYSTEM
 	Thread gameLoop;
-	KeyManager km=new KeyManager();
+	KeyManager km=new KeyManager(this);
 	public TileManager tileM=new TileManager(this);
 	SoundManager music= new SoundManager();
 	SoundManager sE = new SoundManager();
+	public CollisionManager cManager= new CollisionManager(this);
 	public UI ui= new UI(this);
 	int FPS=60;
 	//SETTINGS
-	public CollisionManager cManager= new CollisionManager(this);
+	public int gameState;
+	public final int playState =1;
+	public final int pauseState=2;
+	public final int dialogueState=3;
 	//ENTITY AND OBJECT
 	public Player player = new Player(this, km);
 	public SuperObject obj[]=new SuperObject[10];
+	public Entity npc[] = new Entity[10];
 	public AssetManager aSetter = new AssetManager(this);
 	//GAME STATE
 
@@ -55,16 +61,31 @@ public class GamePanel extends JPanel implements Runnable{
 	}
 	public void setupGame() {
 		aSetter.setObject();
-//		playMusic(0);
+		aSetter.setNpc();
+		playMusic(0);
+		stopMusic();
+		gameState=playState;
 		
 	}
 	public void startGameThread() {
 		gameLoop = new Thread(this);
 		gameLoop.start();
 	}
-
+	//ACTUALIZAR LA INFO DE LOS OBJETOS
 	public void update() {
-		player.update();
+		if (gameState == playState) {
+			//PLAYER
+			player.update();
+			//NPC (AI)
+			for(int i = 0 ; i < npc.length;i++) {
+				if (npc[i]!=null) {
+					npc[i].update();
+				}
+			}
+		}
+		if (gameState==pauseState) {
+			
+		}
 	}
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -78,20 +99,26 @@ public class GamePanel extends JPanel implements Runnable{
 		//*****************
 		//DRAW FIRST THE TILE
 		tileM.draw(g2);
-		
+		//THEN OBJECTS
 		for(int i = 0 ; i < obj.length;i++) {
 			if (obj[i]!=null) {
 				obj[i].draw(g2, this);
 			}
 		}
-		//SECOND THE PLAYER
+		//THEN THE NPC
+		for(int i = 0 ; i < npc.length;i++) {
+			if (npc[i]!=null) {
+				npc[i].draw(g2);
+			}
+		}
+		//THEN THE PLAYER
 		player.draw(g2);
 		//THEN THE UI
 		ui.draw(g2);
 		//***DEBUG END**
 		if (km.checkDrawTime==true) {
 			long drawEnd = System.nanoTime();
-			long delta = drawStart-drawEnd;
+			long delta = drawEnd-drawStart;
 			g2.setColor(Color.WHITE);
 			g2.drawString("Delta: "+ delta,10,500);
 			System.out.println("Delta:"+delta);	

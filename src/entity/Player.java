@@ -15,18 +15,15 @@ import manager.KeyManager;
 
 public class Player extends Entity{
 	
-	GamePanel gp;
 	KeyManager km;
 	public final int screenX;
 	public final int screenY;
-	//SCORE DE LLAVES
-	public int hasKeys=0;
 	//SPRITE RESET
 	int spriteReset=0;
 	
 	public Player(GamePanel gp,KeyManager km) {
+		super(gp);
 		
-		this.gp=gp;
 		this.km=km;
 		//STICK CHAR IN MID ON SCREEN
 		this.screenX = gp.screenWidth/2-(gp.tileSize/2);
@@ -52,33 +49,18 @@ public class Player extends Entity{
 //		up1=ImageIO.read(getClass().getResourceAsStream("/player/boy_up_1.png"));
 //		up2=ImageIO.read(getClass().getResourceAsStream("/player/boy_up_2.png"));
 		//NEW METHOD
-		up1= setup("boy_up_1");
-		up2= setup("boy_up_2");
-		down1= setup("boy_down_1");
-		down2= setup("boy_down_2");
-		left1= setup("boy_left_1");
-		left2= setup("boy_left_2");
-		right1= setup("boy_right_1");
-		right2= setup("boy_right_2");
-		
-		
-		
+		up1= setup("/player/boy_up_1");
+		up2= setup("/player/boy_up_2");
+		down1= setup("/player/boy_down_1");
+		down2= setup("/player/boy_down_2");
+		left1= setup("/player/boy_left_1");
+		left2= setup("/player/boy_left_2");
+		right1= setup("/player/boy_right_1");
+		right2= setup("/player/boy_right_2");
 	}
-	public BufferedImage setup(String imageName) {
-		UtilityTool uTool = new UtilityTool();
-		BufferedImage scaledImage = null;
-		try {
-			scaledImage=ImageIO.read(getClass().getResourceAsStream("/player/"+imageName+".png"));
-			scaledImage=uTool.scaleImage(scaledImage, gp.tileSize, gp.tileSize);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return scaledImage;
-	}
+
 	public void update() {
-		if(km.up==true||km.down==true||
-				km.left==true||km.right==true) {
-			
+		if(km.up==true||km.down==true||km.left==true||km.right==true) {
 			
 			if (km.up==true) {
 				direction="up";
@@ -95,8 +77,17 @@ public class Player extends Entity{
 			//COLLISION CHECK TILES
 			collisionOn=false;
 			gp.cManager.checkTile(this);
+			//******COLLISION*********
+			//----COLISION WITH OBJECTS--- index
+			int objIndex =gp.cManager.checkObject(this, true);
+			pickUpObject(objIndex);
+			//--------------------------------
+			//-----NPC COLLISION--------
+			int npcIndex = gp.cManager.checkEntity(this, gp.npc);
+			interactNpc(npcIndex);
+			//--------------------------
 
-			if (collisionOn==false) {
+			if (!collisionOn) {//***************************************************CAMBIO************************************
 				switch(direction) {
 				case "up":	worldY-=speed;break;
 				case "down":worldY+=speed;break;
@@ -104,11 +95,7 @@ public class Player extends Entity{
 				case "right":worldX+=speed;break;
 				}
 			}
-			//******COLLISION*********
-			//----COLISION WITH OBJECTS--- index
-			int objIndex =gp.cManager.checkObject(this, true);
-			pickUpObject(objIndex);
-			//--------------------------------
+	
 			spriteCounter++;
 			if (spriteCounter>12) {
 				if (spriteNum==1) {
@@ -131,40 +118,11 @@ public class Player extends Entity{
 	}
 	public void pickUpObject(int i) {
 		if (i != 999) {
-			//gp.obj[index]=null; "para que el obejto "desaparezca" al ser tocado"
-			String objectName= gp.obj[i].name;
-			switch(objectName) {
-			case "Key":
-			gp.playSE(1);
-			hasKeys++;
-			gp.obj[i]=null;
-			gp.ui.showMessage("You picket up a key");
-//			System.out.println("Has: " + hasKeys+" keys");
-			break;
-			case "Door": 
-			if (hasKeys >0) {
-			gp.playSE(3);
-			gp.obj[i]=null;
-			hasKeys--;
-			gp.ui.showMessage("You opened a door");
-			}else {
-				gp.ui.showMessage("You need a key");
-			}
-//			System.out.println("Has: " + hasKeys+" keys");
-			break;
-			case "Boots":
-			gp.playSE(2);
-			gp.obj[i]=null;
-			speed+=10;
-				gp.ui.showMessage("Speed Incremented to: "+speed);
-			break;
-			case "Chest":
-			gp.ui.gameFinished=true;
-			gp.stopMusic();
-			gp.playSE(4);
-			gp.obj[i]=null;
-			break;
-			}
+		}
+	}
+	public void interactNpc(int i) {
+		if (i != 999) {
+			System.out.println("hitting a npc!!");
 		}
 	}
 	public void draw(Graphics2D g2) {
