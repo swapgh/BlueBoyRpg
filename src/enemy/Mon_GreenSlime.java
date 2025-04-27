@@ -16,6 +16,9 @@ public class Mon_GreenSlime extends Entity {
 		maxLife=4;
 		life = maxLife;
 		type=2;
+		attack= 5;
+		defense= 0;
+		xp=2;
 		solidArea.x=3;
 		solidArea.y=18;
 		solidArea.width=42;
@@ -54,5 +57,10 @@ public class Mon_GreenSlime extends Entity {
 			}
 			aiLockMove=0;
 		}
+	}
+	//ENEMY MOVE AWAY FROM PLAYER
+	public void damageReaction() {
+		aiLockMove =0;
+		direction = gp.player.direction;
 	}
 }

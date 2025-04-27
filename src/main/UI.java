@@ -9,6 +9,8 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import entity.Entity;
 import objects.Obj_Heart;
@@ -21,8 +23,10 @@ public class UI {
 	Font roboto,robotoB,maruMonica,purisa;
 	BufferedImage heart_full,heart_half,heart_blank;
 	public boolean messageOn = false;
-	public String message = "";
-	int messageCounter=0;
+//	public String message = "";
+//	int messageCounter=0;
+	ArrayList<String> message= new ArrayList<>();
+	ArrayList<Integer>messageCounter= new ArrayList<>();
 	public boolean gameFinished=false;
 	//Npc dialog
 	public String currentDialog;
@@ -50,9 +54,10 @@ public class UI {
 		heart_half=heart.image2;
 		heart_blank=heart.image3;
 	}
-	public void showMessage (String text) {
-		message=text;
-		messageOn=true;
+	//NPC DIALOGUE
+	public void addMessage (String text) {
+		message.add(text);
+		messageCounter.add(0);
 	}
 	public void draw(Graphics2D g2) {
 		
@@ -65,10 +70,11 @@ public class UI {
 		if (gp.gameState==gp.titileState) {
 			drawTitileScreen();
 		}
-		
 		//PLAY STATE
 		if (gp.gameState==gp.playState) {
 			drawPlayerLife();
+			//FOR THE DIALOGUES
+			drawMessage();
 		}
 		//PAUSE STATE
 		if (gp.gameState== gp .pauseState) {
@@ -77,6 +83,31 @@ public class UI {
 		//DIALOGUE STATE
 		if (gp.gameState==gp.dialogueState) {
 			drawDialogueScreen();
+		}
+		//CHARACTER STATE
+		if (gp.gameState==gp.characterState) {
+			drawCharacterScreen();
+		}
+	}
+	public void drawMessage() {
+		int messageX = gp.tileSize;
+		int messageY = gp.tileSize*4;
+		g2.setFont(purisa.deriveFont(Font.BOLD,20F));
+		for(int i=0;i <message.size();i++) {
+			if (message.get(i)!= null) {
+				g2.setColor(Color.WHITE);
+				g2.drawString(message.get(i), messageX, messageY);
+				// INCREMENTAMOS EL INDEX PARA EL PROXIMO MENSAJE EN EL ARRAY
+				int counter = messageCounter.get(i)+1;
+				// SET THE COUNTER TO THE ARRAY +1 
+				messageCounter.set(i, counter);
+				messageY +=50;
+				//CLEAR THE DIALOGUE IN THE SCREEN
+				if (messageCounter.get(i)>180) {
+					message.remove(i);
+					messageCounter.remove(i);
+				}
+			}
 		}
 	}
 	public void drawPlayerLife() {
@@ -221,10 +252,100 @@ public class UI {
 		int y= gp.screenHeight/2;
 		g2.drawString(text, x, y);
 	}
+	public void drawCharacterScreen() {
+		//FRAME
+		final int frameX = gp.tileSize;
+		final int frameY = gp.tileSize;
+		final int frameWidth = gp.tileSize*5;
+		final int frameHeight = gp.tileSize*10;
+		drawSubWindow(frameX, frameY, frameWidth, frameHeight);
+		//TEXT
+		g2.setColor(Color.WHITE);
+		g2.setFont(maruMonica.deriveFont(32F));
+		int textX = frameX +20;
+		int textY = frameY +gp.tileSize;
+		final int lineHeight = 35;
+		
+		//TEXT NAMES
+		//NAMES
+		g2.drawString("Level",textX,textY);
+		textY+= lineHeight;
+		g2.drawString("Life",textX,textY);
+		textY+= lineHeight;
+		g2.drawString("Strenght",textX,textY);
+		textY+= lineHeight;
+		g2.drawString("Dexterity",textX,textY);
+		textY+= lineHeight;
+		g2.drawString("Attack",textX,textY);
+		textY+= lineHeight;
+		g2.drawString("Defense",textX,textY);
+		textY+= lineHeight;
+		g2.drawString("XP",textX,textY);
+		textY+= lineHeight;
+		g2.drawString("Next Level",textX,textY);
+		textY+= lineHeight;
+		g2.drawString("Coin",textX,textY);
+		textY+= lineHeight+15;
+		g2.drawString("Weapon",textX,textY);
+		textY+= lineHeight+20;
+		g2.drawString("Shield",textX,textY);
+		textY+= lineHeight;
+		
+		//VALUES
+		int tailX=(frameX+frameWidth)-30;
+		//Reset textY
+		textY = frameY +gp.tileSize;
+		String value;
+		
+		value =String.valueOf(gp.player.level);
+		textX=getXforAlignToRightText(value, tailX);
+		g2.drawString(value, textX, textY);
+		textY+= lineHeight;
+		value =String.valueOf(gp.player.life+"/"+gp.player.maxLife);
+		textX=getXforAlignToRightText(value, tailX);
+		g2.drawString(value, textX, textY);
+		textY+= lineHeight;
+		value =String.valueOf(gp.player.strength);
+		textX=getXforAlignToRightText(value, tailX);
+		g2.drawString(value, textX, textY);
+		textY+= lineHeight;
+		value =String.valueOf(gp.player.dexterity);
+		textX=getXforAlignToRightText(value, tailX);
+		g2.drawString(value, textX, textY);
+		textY+= lineHeight;
+		value =String.valueOf(gp.player.attack);
+		textX=getXforAlignToRightText(value, tailX);
+		g2.drawString(value, textX, textY);
+		textY+= lineHeight;
+		value =String.valueOf(gp.player.defense);
+		textX=getXforAlignToRightText(value, tailX);
+		g2.drawString(value, textX, textY);
+		textY+= lineHeight;
+		value =String.valueOf(gp.player.xp);
+		textX=getXforAlignToRightText(value, tailX);
+		g2.drawString(value, textX, textY);
+		textY+= lineHeight;
+		value =String.valueOf(gp.player.nextLevelXp);
+		textX=getXforAlignToRightText(value, tailX);
+		g2.drawString(value, textX, textY);
+		textY+= lineHeight;
+		value =String.valueOf(gp.player.coin);
+		textX=getXforAlignToRightText(value, tailX);
+		g2.drawString(value, textX, textY);
+		textY+= lineHeight;
+		g2.drawImage(gp.player.currentWeapon.down1, tailX-gp.tileSize, textY-13,null);
+		textY+= gp.tileSize;
+		g2.drawImage(gp.player.currentShield.down1, tailX-gp.tileSize, textY-13,null);
+	}
 	public int getXforCenteredText(String text) {
 		
 		int lenght = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
 		int x= gp.screenWidth/2- lenght/2;
+		return x;
+	}
+	public int getXforAlignToRightText(String text,int tailX) {
+		int length = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+		int x = tailX-length;
 		return x;
 	}
 }

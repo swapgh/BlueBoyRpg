@@ -44,11 +44,12 @@ public class EventManager {
 		}
 		if (canTouchEvent == true) {
 			if (hit(27,16,"right")==true) {damagePit(gp.dialogueState);}
-			if (hit(23,19,"any")==true) {damagePit(gp.dialogueState);}
+//			if (hit(23,19,"any")==true) {damagePit(gp.dialogueState);}
+			if (hit(19,21,"any")==true) {damagePit(19,21,gp.dialogueState);}
 			if (hit(23,12,"up")==true) {healingPool(gp.dialogueState);}
 		}
-
-//		if (hit(27,22,"any")==true) {damagePit(gp.dialogueState);}
+			//CONSTANT INTERRACTION
+//		if (hit(23,19,"any")==true) {damagePit(gp.dialogueState);}
 
 	}
 	public boolean hit(int col,int row,String reqDirection) {
@@ -60,7 +61,7 @@ public class EventManager {
 		eventRect[col][row].x = col * gp.tileSize + eventRect[col][row].x;
 		eventRect[col][row].y = row * gp.tileSize + eventRect[col][row].y;
 		
-		if (gp.player.solidArea.intersects(eventRect[col][row])) {
+		if (gp.player.solidArea.intersects(eventRect[col][row])&& eventRect[col][row].eventDone==false) {
 			if (gp.player.direction.contentEquals(reqDirection) || reqDirection.contentEquals("any")) {
 				hit=true;
 				//RESET WORLD X-Y IF EVENT TRIGGERED
@@ -74,17 +75,39 @@ public class EventManager {
 		eventRect[col][row].y = eventRect[col][row].eventRectDefaultY;
 		return hit;
 	}
-	public void damagePit(int gameState) {
+	//**************TRIGGER EVENT JUST 1 TIME*****************
+	public void damagePit(int col,int row,int gameState) {
 		gp.gameState=gameState;
+		gp.playSE(6);
 		gp.ui.currentDialog="You fall to a pit";
 		gp.player.life -=1;
-		canTouchEvent = false;
+		eventRect[col][row].eventDone=true;
+	}
+
+	public void teleport(int col,int row,int gameState) {
+		gp.gameState=gameState;
+		gp.ui.currentDialog="You have been teleported";
+		gp.player.worldX=gp.tileSize*37;
+		gp.player.worldY=gp.tileSize*10;
+		eventRect[col][row].eventDone=true;
+	}
+	//*********************************************************
+	public void damagePit(int gameState) {
+		gp.gameState=gameState;
+		gp.playSE(6);
+		gp.ui.currentDialog="You fall to a pit";
+		gp.player.life -=1;
+		canTouchEvent=false;
+		
 	}
 	public void healingPool(int gameState) {
 		if (gp.km.enterPress==true||gp.km.ePressed==true) {
 			gp.gameState=gameState;
+			gp.player.attackCanceled=true;
+			gp.playSE(2);
 			gp.ui.currentDialog = "You feel replenish";
 			gp.player.life=gp.player.maxLife;
+			gp.aSetter.setEnemy();
 		}
 	}
 	public void teleport(int gameState) {

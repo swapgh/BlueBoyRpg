@@ -13,6 +13,8 @@ import javax.imageio.ImageIO;
 import main.GamePanel;
 import main.UtilityTool;
 import manager.KeyManager;
+import objects.Obj_Shield_Wood;
+import objects.Obj_Sword_Normal;
 
 
 public class Player extends Entity{
@@ -22,6 +24,7 @@ public class Player extends Entity{
 	public final int screenY;
 	//SPRITE RESET
 	int spriteReset=0;
+	public boolean attackCanceled=false;
 	
 	public Player(GamePanel gp,KeyManager km) {
 		super(gp);
@@ -44,12 +47,29 @@ public class Player extends Entity{
 		getPlayerAtackImage();
 	}
 	public void setDefaultValues() {
-		worldX=gp.tileSize*23;
-		worldY=gp.tileSize*21;
-		speed=10;
-		direction="down";
-		maxLife=12;
-		life=maxLife;
+		worldX = gp.tileSize*23;
+		worldY = gp.tileSize*21;
+		speed = 10;
+		direction = "down";
+		maxLife = 12;
+		life = maxLife;
+		//PLAYER STATS
+		level = 1;
+		strength = 1;
+		dexterity = 1;
+		xp = 0;
+		nextLevelXp = 5;
+		coin = 0;
+		currentWeapon = new Obj_Sword_Normal(gp);
+		currentShield = new Obj_Shield_Wood(gp);
+		attack = getAttack();
+		defense= getDefense();
+	}
+	public int getAttack() {
+		return attack= strength * currentWeapon.attackValue;
+	}
+	public int getDefense() {
+		return defense = dexterity * currentShield.defenseValue;
 	}
 	public void getPlayerImage() {
 		//DRAW 1 BY 1
@@ -125,6 +145,14 @@ public class Player extends Entity{
 				case "right":worldX+=speed;break;
 				}
 			}
+			//*****PARA NO ATACAR CUANDO VAS A LA FUENTE*****
+			if (km.enterPress==true||km.ePressed==true && attackCanceled ==false) {
+				gp.playSE(7);
+				attacking=true;
+				spriteCounter = 0;
+			}
+			attackCanceled=false;
+			//**************************************
 			//PARA ROTAR SPRITES
 			spriteCounter++;
 			if (spriteCounter>12) {
@@ -198,18 +226,21 @@ public class Player extends Entity{
 		if (gp.km.enterPress == true||gp.km.ePressed==true) {
 			
 			if (i != 999) {
+				attackCanceled = true;
 				gp.gameState=gp.dialogueState;
 				gp.npc[i].speak();
-			}
-			else {
-				attacking = true;
 			}
 		}
 	}
 	public void enemyDamage(int i) {
 		if (i !=999) {
 			if (invincible==false) {
-				life-=1;
+				gp.playSE(6);
+				int damage = attack -gp.enemy[i].attack-defense;
+				if (damage < 0) {
+					damage = 0;
+				}
+				life-= damage;
 				invincible=true;
 			}
 		}
@@ -217,12 +248,37 @@ public class Player extends Entity{
 	public void damageEnemy(int i) {
 		if (i !=999) {
 			if (gp.enemy[i].invincible ==false) {
-				gp.enemy[i].life -=1;
+				gp.playSE(5);
+				int damage = attack -gp.enemy[i].defense;
+				if (damage < 0) {
+					damage = 0;
+				}
+				gp.enemy[i].life -= damage;
+				gp.ui.addMessage(damage + " damage!");
 				gp.enemy[i].invincible = true;
+				gp.enemy[i].damageReaction();
 				if (gp.enemy[i].life<=0) {
-					gp.enemy[i]=null;
+					gp.enemy[i].dying=true;
+					gp.ui.addMessage("Killed the "+gp.enemy[i].name+ "!!");
+					xp += gp.enemy[i].xp;
+					checkLevelUp();
 				}
 			}
+		}
+	}
+	public void checkLevelUp() {
+		if (xp > nextLevelXp) {
+			level++;
+			nextLevelXp= nextLevelXp*2;
+			maxLife +=1;
+			strength++;
+			dexterity++;
+			attack = getAttack();
+			defense = getDefense();
+			
+			gp.playSE(8);
+			gp.gameState=gp.dialogueState;
+			gp.ui.currentDialog="You are level "+level+ " now! \n"+"You feel stronger!!";
 		}
 	}
 	public void draw(Graphics2D g2) {
@@ -281,7 +337,7 @@ public class Player extends Entity{
 		}
 		
 		if (invincible == true) {
-			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4F));
+			changeAlpha(g2, 0.4F);
 		}
 		//Para que se centre la pantalla hay q cambiar las primeras x,y
 		g2.setColor(Color.PINK);
@@ -291,9 +347,9 @@ public class Player extends Entity{
 		g2.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
 		//INVINCIBLE COUNTER
-		g2.setFont(new Font("Arial",Font.PLAIN,26));
-		g2.setColor(Color.WHITE);
-		g2.drawString("Invincible"+invincibleCounter, 10, 400);
+//		g2.setFont(new Font("Arial",Font.PLAIN,26));
+//		g2.setColor(Color.WHITE);
+//		g2.drawString("Invincible"+invincibleCounter, 10, 400);
 
 	}
 }

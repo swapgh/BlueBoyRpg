@@ -1,12 +1,10 @@
 package entity;
 import java.awt.AlphaComposite;
-//***************************************************CAMBIO************************************
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-
 import javax.imageio.ImageIO;
-
 import main.GamePanel;
 import main.UtilityTool;
 
@@ -42,16 +40,36 @@ public class Entity {
 	public boolean invincible=false;
 	public int invincibleCounter=0;
 	public int type; //0=player,1=npc,2=enemy
+	public boolean alive = true;
+	public boolean dying = false;
+	int dyingCounter=0;
+	boolean hpBarOn = false;
+	int hpBarCounter=0;
 	//UI CHAR STATUS
 	public int maxLife;
 	public int life;
+	//CHARACTER ATTRIBUTES
+	public int maxMana;
+	public int mana;
+	public int level;
+	public int strength;
+	public int dexterity;
+	public int attack;
+	public int defense;
+	public int xp;
+	public int nextLevelXp;
+	public int coin;
+	public Entity currentWeapon;
+	public Entity currentShield;
+	//ITEM ATRIBUTES
+	public int attackValue;
+	public int defenseValue;
 	
 	public Entity(GamePanel gp) {
 		this.gp = gp;
 	}
-	public void setAction() {
-		
-	}
+	public void setAction(){}
+	public void damageReaction(){}
 	public void speak() {
 		if (dialogue[dialogueIndex]==null) {
 			dialogueIndex=0;
@@ -77,7 +95,12 @@ public class Entity {
 		gp.cManager.checkEntity(this, gp.enemy);
 		if (this.type == 2 && contactPlayer ==true) {
 			if (gp.player.invincible == false) {
-				gp.player.life -=1;
+				gp.playSE(6);
+				int damage = attack - gp.player.defense;
+				if (damage < 0) {
+					damage = 0;
+				}
+				gp.player.life -= damage;
 				gp.player.invincible = true;
 			}
 		}
@@ -128,14 +151,56 @@ public class Entity {
              case "left": image = (spriteNum == 1) ? left1 : left2; break;
              case "right": image = (spriteNum == 1) ? right1 : right2; break;
          }
+			 //MONSTER HP BAR
+			 if (type == 2 && hpBarOn == true) {
+				    double oneScale = (double)gp.tileSize / maxLife;
+				    double hpBarvalue = oneScale * life;
+				    // Draw background bar (black)
+				    g2.setColor(Color.BLACK);
+				    g2.fillRect(screenX, screenY - 10, gp.tileSize, 8);
+				    // Draw life bar (red)
+				    g2.setColor(Color.RED);
+				    g2.fillRect(screenX, screenY - 10, (int)hpBarvalue, 8);
+				    //HP BAR DISPLAY COUNTER
+				    hpBarCounter++;
+				    if (hpBarCounter >600) {
+						hpBarCounter=0;
+						hpBarOn=false;
+					}
+				}
+			 //MONSTER ALPHA BLINK
 			if (invincible == true) {
-				g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4F));
+				hpBarOn=true;
+//				hpBarCounter=0;
+				changeAlpha(g2, 0.4F);
+			}
+			if (dying== true) {
+				dyingAnimation(g2);
 			}
 			g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
-			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
+			changeAlpha(g2, 1F);
 		}
 	}
-
+	public void dyingAnimation(Graphics2D g2) {
+		dyingCounter++;
+		int i = 5;
+		if (dyingCounter<=i) {changeAlpha(g2, 0F);}
+		if (dyingCounter> i && dyingCounter <=i*2) {changeAlpha(g2, 1F);}
+		if (dyingCounter> i*2 && dyingCounter <=i*3) {changeAlpha(g2, 0F);}
+		if (dyingCounter> i*3 && dyingCounter <=i*4) {changeAlpha(g2, 1F);}
+		if (dyingCounter> i*4 && dyingCounter <=i*5) {changeAlpha(g2, 0F);}
+		if (dyingCounter> i*5 && dyingCounter <=i*6) {changeAlpha(g2, 1F);}
+		if (dyingCounter> i*6 && dyingCounter <=i*7) {changeAlpha(g2, 0F);}
+		if (dyingCounter> i*7 && dyingCounter <=i*8) {changeAlpha(g2, 1F);}
+		if (dyingCounter> i*8) {
+			dying = false;
+			alive = false;
+		}
+	}
+	//BLINKING ANIMATION
+	public void changeAlpha(Graphics2D g2, float alphaValue) {
+		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaValue));
+	}
 	public BufferedImage setup(String imagePath,int width,int height) {
 		UtilityTool uTool = new UtilityTool();
 		BufferedImage scaledImage = null;

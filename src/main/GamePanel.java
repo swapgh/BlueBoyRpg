@@ -52,6 +52,7 @@ public class GamePanel extends JPanel implements Runnable{
 	public final int playState =1;
 	public final int pauseState=2;
 	public final int dialogueState=3;
+	public final int characterState=4;
 	
 	//ENTITY AND OBJECT
 	public Player player = new Player(this, km);
@@ -94,9 +95,15 @@ public class GamePanel extends JPanel implements Runnable{
 					npc[i].update();
 				}
 			}
+			//ENEMY
 			for(int i = 0 ; i < enemy.length;i++) {
 				if (enemy[i] !=null) {
-					enemy[i].update();
+					if(enemy[i].alive==true && enemy[i].dying==false) {
+						enemy[i].update();
+					}
+					if(enemy[i].alive==false) {
+						enemy[i]=null;
+					}
 				}
 			}
 		}
@@ -165,8 +172,16 @@ public class GamePanel extends JPanel implements Runnable{
 			long delta = (drawEnd-drawStart);
 			g2.setColor(Color.WHITE);
 			g2.setFont(new Font("Arial",Font.PLAIN,20));
-			g2.drawString("Delta: "+ delta,10,500);
+			int x = 10;
+			int y = 400;
+			int lineHeight = 20;
+			g2.drawString("WorldX: "+ player.worldX,x,y);y+= lineHeight;
+			g2.drawString("WorldY: "+ player.worldY,x,y);y+= lineHeight;
+			g2.drawString("Col: "+ (player.worldX+player.solidArea.x)/tileSize,x,y);y+= lineHeight;
+			g2.drawString("Row: "+ (player.worldY+player.solidArea.y)/tileSize,x,y);y+= lineHeight;
+			g2.drawString("Delta: "+ delta,x,y);
 			System.out.println("Delta:"+delta);	
+			
 		}
 		//**************
 		
