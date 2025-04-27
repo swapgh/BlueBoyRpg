@@ -6,8 +6,11 @@ import main.UtilityTool;
 
 public class Mon_GreenSlime extends Entity {
 	
+	GamePanel gp;
 	public Mon_GreenSlime(GamePanel gp) {
 		super(gp);
+		
+		this.gp=gp;
 		name= "Green Slime";
 		speed= 1;
 		maxLife=4;
@@ -23,14 +26,14 @@ public class Mon_GreenSlime extends Entity {
 	}
 	
 	public void getImage() {
-		up1=setup("/enemy/greenslime_down_1");
-		up2=setup("/enemy/greenslime_down_1");
-		down1=setup("/enemy/greenslime_down_1");
-		down2=setup("/enemy/greenslime_down_1");
-		left1=setup("/enemy/greenslime_down_1");
-		left2=setup("/enemy/greenslime_down_1");
-		right1=setup("/enemy/greenslime_down_1");
-		right2=setup("/enemy/greenslime_down_1");
+		up1=setup("/enemy/greenslime_down_1",gp.tileSize,gp.tileSize);
+		up2=setup("/enemy/greenslime_down_1",gp.tileSize,gp.tileSize);
+		down1=setup("/enemy/greenslime_down_1",gp.tileSize,gp.tileSize);
+		down2=setup("/enemy/greenslime_down_1",gp.tileSize,gp.tileSize);
+		left1=setup("/enemy/greenslime_down_1",gp.tileSize,gp.tileSize);
+		left2=setup("/enemy/greenslime_down_1",gp.tileSize,gp.tileSize);
+		right1=setup("/enemy/greenslime_down_1",gp.tileSize,gp.tileSize);
+		right2=setup("/enemy/greenslime_down_1",gp.tileSize,gp.tileSize);
 	}
 	public void setAction() {
 		aiLockMove++;

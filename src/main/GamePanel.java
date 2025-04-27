@@ -2,6 +2,7 @@ package main;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public class GamePanel extends JPanel implements Runnable{
 		aSetter.setEnemy();
 //		playMusic(0);
 //		stopMusic();
-		gameState=playState;
+		gameState=titileState;
 		
 	}
 	public void startGameThread() {
@@ -108,6 +109,7 @@ public class GamePanel extends JPanel implements Runnable{
 		Graphics2D g2= (Graphics2D)g;
 		//***DEBUG START***
 		long drawStart=0;
+		
 		if (km.checkDrawTime==true) {
 			drawStart=System.nanoTime();	
 		}
@@ -150,9 +152,7 @@ public class GamePanel extends JPanel implements Runnable{
 				entityList.get(i).draw(g2);
 			}
 			//EMPTY ENTITY COLLECTION LIST
-			for(int i = 0 ; i< entityList.size();i++) {
-				entityList.remove(i).draw(g2);
-			}
+			entityList.clear();
 //			//THEN THE PLAYER
 //			player.draw(g2);
 			//THEN THE UI
@@ -162,8 +162,9 @@ public class GamePanel extends JPanel implements Runnable{
 		//***DEBUG END**
 		if (km.checkDrawTime==true) {
 			long drawEnd = System.nanoTime();
-			long delta = drawEnd-drawStart;
+			long delta = (drawEnd-drawStart);
 			g2.setColor(Color.WHITE);
+			g2.setFont(new Font("Arial",Font.PLAIN,20));
 			g2.drawString("Delta: "+ delta,10,500);
 			System.out.println("Delta:"+delta);	
 		}

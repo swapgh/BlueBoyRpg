@@ -17,11 +17,11 @@ public class AssetManager {
 	}
 	
 	public void setObject() {
-		int i=0;
-		gp.obj[i] = new Obj_Door(gp);
-		gp.obj[i].worldX = gp.tileSize * 21;
-		gp.obj[i].worldY = gp.tileSize * 22;
-		i++;
+//		int i=0;
+//		gp.obj[i] = new Obj_Door(gp);
+//		gp.obj[i].worldX = gp.tileSize * 21;
+//		gp.obj[i].worldY = gp.tileSize * 22;
+//		i++;
 //		gp.obj[i] = new Obj_Door(gp);
 //		gp.obj[i].worldX = gp.tileSize * 23;
 //		gp.obj[i].worldY = gp.tileSize * 25;
@@ -35,8 +35,8 @@ public class AssetManager {
 	public void setNpc() {
 		int i=0;
 		gp.npc[i]=new Npc_OldMan(gp);
-		gp.npc[i].worldX=gp.tileSize*9;
-		gp.npc[i].worldY=gp.tileSize*10;
+		gp.npc[i].worldX=gp.tileSize*21;
+		gp.npc[i].worldY=gp.tileSize*22;
 		i++;
 
 	}

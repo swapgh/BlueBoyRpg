@@ -1,4 +1,5 @@
 package entity;
+import java.awt.AlphaComposite;
 //***************************************************CAMBIO************************************
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -19,12 +20,16 @@ public class Entity {
 	public String name;
 	public boolean collision = false;
 	public String direction="down";
-	// KEYS
+	// PLAYER IMAGES
 	public BufferedImage up1, up2, down1, down2, left1, left2, right1, right2;
-	// IMAGES
+	// PLAYER ATACK IMAGES
+	public BufferedImage attackUp1, attackUp2, attackDown1, attackDown2, attackLeft1, attackLeft2, attackRight1, attackRight2;
+	boolean attacking = false;
+	// IMAGES CHANGER
 	public int spriteCounter = 0;
 	public int spriteNum = 1;
 	// COLLISION
+	public Rectangle attackArea = new Rectangle(0,0,0,0);
 	public Rectangle solidArea = new Rectangle(0, 0, 48, 48);
 	public boolean collisionOn = false;
 	public int aiLockMove= 0;
@@ -95,6 +100,14 @@ public class Entity {
 			}
 			spriteCounter=0;
 		}
+		//INVINCIBLE COUNTER
+		if (invincible == true) {
+			invincibleCounter++;
+			if (invincibleCounter>40) {
+				invincible=false;
+				invincibleCounter=0;
+			}
+		}
 		
 	}
 	// WE DRAW NPC AND HE CAN MOVE
@@ -115,16 +128,20 @@ public class Entity {
              case "left": image = (spriteNum == 1) ? left1 : left2; break;
              case "right": image = (spriteNum == 1) ? right1 : right2; break;
          }
+			if (invincible == true) {
+				g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4F));
+			}
 			g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
 		}
 	}
 
-	public BufferedImage setup(String imagePath) {
+	public BufferedImage setup(String imagePath,int width,int height) {
 		UtilityTool uTool = new UtilityTool();
 		BufferedImage scaledImage = null;
 		try {
 			scaledImage = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
-			scaledImage = uTool.scaleImage(scaledImage, gp.tileSize, gp.tileSize);
+			scaledImage = uTool.scaleImage(scaledImage,width,height);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

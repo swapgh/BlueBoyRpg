@@ -8,7 +8,7 @@ import main.GamePanel;
 public class KeyManager implements KeyListener{
 	
 GamePanel gp;
-public boolean upPressed,downPressed,leftPressed,rightPressed,enterPress,escPressed,pPressed,fPressed,ePressed;
+public boolean upPressed,downPressed,leftPressed,rightPressed,enterPress,escPressed,pPressed,fPressed,ePressed,tPressed;
 //DEBUG
 public boolean checkDrawTime=false;
 
@@ -33,7 +33,7 @@ public KeyManager(GamePanel gp) {
 						gp.ui.commandNum=0;
 					}
 				}
-				if (code == KeyEvent.VK_ENTER) {
+				if (code == KeyEvent.VK_ENTER||code == KeyEvent.VK_E) {
 					if (gp.ui.commandNum==0) {
 						gp.ui.titleScreenState=1;
 					}if (gp.ui.commandNum==1) {
@@ -52,7 +52,7 @@ public KeyManager(GamePanel gp) {
 				if (code == KeyEvent.VK_W) {
 					gp.ui.commandNum--;
 					if (gp.ui.commandNum<0) {
-						gp.ui.commandNum=2;
+						gp.ui.commandNum=3;
 					}
 				}
 				if (code == KeyEvent.VK_S) {
@@ -61,7 +61,7 @@ public KeyManager(GamePanel gp) {
 						gp.ui.commandNum=0;
 					}
 				}
-				if (code == KeyEvent.VK_ENTER) {
+				if (code == KeyEvent.VK_ENTER||code == KeyEvent.VK_E) {
 					if (gp.ui.commandNum==0) {
 						System.out.println("Do some fighter stuff");
 						gp.gameState=gp.playState;
@@ -91,7 +91,7 @@ public KeyManager(GamePanel gp) {
 	
 		}
 		//PLAY STATE
-		if (gp.gameState == gp.playState) {
+		else if (gp.gameState == gp.playState) {
 			if (code == KeyEvent.VK_W) {
 				upPressed=true;
 			}
@@ -120,7 +120,7 @@ public KeyManager(GamePanel gp) {
 			
 			//DEBUG
 			if (code== KeyEvent.VK_T) {
-				gp.gameState=gp.playState;
+//				gp.gameState=gp.playState;
 				if (checkDrawTime==false) {
 					checkDrawTime=true;
 				}else if (checkDrawTime==true) {
@@ -136,7 +136,7 @@ public KeyManager(GamePanel gp) {
 		}
 		//DIALOGUE STATE
 		else if (gp.gameState==gp.dialogueState) {
-			if (code== KeyEvent.VK_E) {
+			if (code== KeyEvent.VK_E||code== KeyEvent.VK_ENTER) {
 				gp.gameState=gp.playState;
 			}
 		}
@@ -161,7 +161,10 @@ public KeyManager(GamePanel gp) {
 			ePressed=false;
 		}
 		if (code == KeyEvent.VK_T) {
-			ePressed=false;
+			tPressed=false;
+		}
+		if (code == KeyEvent.VK_P) {
+			pPressed=false;
 		}
 		if (code == KeyEvent.VK_ENTER) {
 			enterPress=false;
