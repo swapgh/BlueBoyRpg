@@ -27,12 +27,28 @@ public class Entity {
 	public int aiLockMove= 0;
 	// PARA OBJETOS
 	public int solidAreaDefaultX, solidAreaDefaultY;
+	// PARA INTERACCION NPC
+	String dialogue[]= new String [20];
+	int dialogueIndex=0;
 
 	public Entity(GamePanel gp) {
 		this.gp = gp;
 	}
 	public void setAction() {
 		
+	}
+	public void speak() {
+		if (dialogue[dialogueIndex]==null) {
+			dialogueIndex=0;
+		}
+		gp.ui.currentDialog=dialogue[dialogueIndex];
+		dialogueIndex++;
+		switch(gp.player.direction) {
+		case "up": direction="down";break;
+		case "down": direction="up";break;
+		case "left": direction="right";break;
+		case "right": direction="left";break;
+		}
 	}
 	public void update() {
 		setAction();

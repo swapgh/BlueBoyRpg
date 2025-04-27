@@ -60,18 +60,18 @@ public class Player extends Entity{
 	}
 
 	public void update() {
-		if(km.up==true||km.down==true||km.left==true||km.right==true) {
+		if(km.upPressed==true||km.downPressed==true||km.leftPressed==true||km.rightPressed==true) {
 			
-			if (km.up==true) {
+			if (km.upPressed==true) {
 				direction="up";
 			}
-			else if (km.down == true) {
+			else if (km.downPressed == true) {
 				direction="down";
 			}
-			else if (km.left==true) {
+			else if (km.leftPressed==true) {
 				direction="left";
 			}
-			else if (km.right==true) {
+			else if (km.rightPressed==true) {
 				direction="right";
 			}
 			//COLLISION CHECK TILES
@@ -122,8 +122,12 @@ public class Player extends Entity{
 	}
 	public void interactNpc(int i) {
 		if (i != 999) {
-			System.out.println("hitting a npc!!");
+			if (gp.km.ePressed==true) {
+				gp.gameState=gp.dialogueState;
+				gp.npc[i].speak();
+			}
 		}
+		gp.km.ePressed=false;
 	}
 	public void draw(Graphics2D g2) {
 		

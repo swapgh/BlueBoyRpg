@@ -10,6 +10,7 @@ public class Npc_OldMan extends Entity {
 		direction = "down";
 		speed = 2;
 		getImage();
+		setDialogue();
 	}
 
 	public void getImage() {
@@ -48,6 +49,16 @@ public class Npc_OldMan extends Entity {
 			}
 			aiLockMove=0;
 		}
+	}
+	public void setDialogue() {
+		dialogue[0]="Hello,lad";
+		dialogue[1]="Hello,lad2,Hello,lad2,Hello\n,lad2Hello,lad2,Hello,lad2,Hello,lad2";
+		dialogue[2]="Hello,lad3";
+		dialogue[3]="Hello,lad4";
+		
+	}
+	public void speak() {
+		super.speak();
 	}
 
 }
