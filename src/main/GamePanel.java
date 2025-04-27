@@ -9,6 +9,7 @@ import entity.Entity;
 import entity.Player;
 import manager.AssetManager;
 import manager.CollisionManager;
+import manager.EventManager;
 import manager.KeyManager;
 import manager.SoundManager;
 import objects.SuperObject;
@@ -36,6 +37,7 @@ public class GamePanel extends JPanel implements Runnable{
 	public TileManager tileM=new TileManager(this);
 	SoundManager music= new SoundManager();
 	SoundManager sE = new SoundManager();
+	public EventManager eMan = new EventManager(this);
 	public CollisionManager cManager= new CollisionManager(this);
 	public UI ui= new UI(this);
 	int FPS=60;
@@ -65,7 +67,7 @@ public class GamePanel extends JPanel implements Runnable{
 		aSetter.setNpc();
 //		playMusic(0);
 //		stopMusic();
-		gameState=titileState;
+		gameState=playState;
 		
 	}
 	public void startGameThread() {

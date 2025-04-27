@@ -117,6 +117,7 @@ public KeyManager(GamePanel gp) {
 			
 			//DEBUG
 			if (code== KeyEvent.VK_T) {
+				gp.gameState=gp.playState;
 				if (checkDrawTime==false) {
 					checkDrawTime=true;
 				}else if (checkDrawTime==true) {

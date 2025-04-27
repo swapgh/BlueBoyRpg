@@ -30,6 +30,9 @@ public class Entity {
 	// PARA INTERACCION NPC
 	String dialogue[]= new String [20];
 	int dialogueIndex=0;
+	//UI CHAR STATUS
+	public int maxLife;
+	public int life;
 
 	public Entity(GamePanel gp) {
 		this.gp = gp;
